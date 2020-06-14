@@ -1,0 +1,36 @@
+{% extends "flashcards/base.html" %}
+
+{% block title %}
+HSK Prep
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12" align="center">
+             <div class="flashcard">
+                <div class="word">
+                    {{word.word}}
+                </div>
+                <div class="pinyin" style="display:none;">
+                    {{word.pinyin}}
+                </div>
+                <div class="translation">
+                    {{word.english}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 offset-md-4" id="answerform">
+            <form>
+                <div class="form-group center-block" style="align-items:center; justify-content: center;">
+                    <input class="form-control" type="text" autofocus>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
