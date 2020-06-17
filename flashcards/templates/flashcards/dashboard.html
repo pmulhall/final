@@ -12,6 +12,26 @@ HSK Prep
         <div class="col-md-12">
             <div class="card-deck">
                 <div class="card">
+                    <div class="card-header">Average Words Per Day</div>
+                    <div class="card-body">
+                        {{ average.created_count__avg }}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Remaining Words in Level</div>
+                    <div class="card-body">
+                        {{ average.created_count__avg }} <!--todo change to qty in level-->
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Days to exam if in profile</div>
+                    <div class="card-body">
+                        {{ average.created_count__avg }} <!--#todo update-->
+                    </div>
+                </div>
+            </div>
+            <div class="card-deck">
+                <div class="card">
                     <div class="card-header">Daily Progress</div>
                     <canvas id="dailygraph" width="400" height="400"></canvas>
                 </div>
@@ -26,13 +46,7 @@ HSK Prep
             </div>
         </div>
     </div>
-    {% for level, qty in data.items %}
-    <div>{{ level }} - {{ qty.2 }}/{{qty.0}}
-        <div class="baroutline">
-            <div class="barinline" style="width:{{ qty.1 }};"></div>
-        </div>
-    </div>
-    {% endfor %}
+
     <script>
         var ctx = document.getElementById('levelsgraph').getContext('2d');
         var levelsgraph = new Chart(ctx, {
@@ -72,17 +86,24 @@ HSK Prep
 
             }
         }
-        })
-        ;
+        });
 
         var ctx2 = document.getElementById('dailygraph').getContext('2d');
         var dailygraph = new Chart(ctx2, {
             type: 'bar',
             data: {
-                labels: ["Yesterday","Today"], <!-- todo update with variable -->
+                labels: [
+                    {% for day in wordsperday %}
+                        '{{ day.dateknown }}',
+                    {% endfor %}
+                ],
         datasets: [{
             label: '# of Words Reviewed',
-            data: [12, 19, 3, 5, 2, 3], <!-- todo update with variable -->
+            data: [
+                {% for day in wordsperday %}
+                        '{{ day.created_count }}',
+                {% endfor %}
+            ],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
