@@ -1,4 +1,5 @@
 {% extends "flashcards/base.html" %}
+{% load static %}
 
 {% block title %}
 HSK Prep
@@ -9,28 +10,88 @@ HSK Prep
 <div class="container">
     <div class="row">
         <div class="col-md-12" align="center">
+            <div class="level">
+                     <span class="badge badge-secondary">Level: {{word.level}}</span>
+            </div>
              <div class="flashcard">
                 <div class="word">
                     {{word.word}}
                 </div>
-                <div class="pinyin" style="display:none;">
+                <div class="pinyin" id="pinyin" style="display:none;">
                     {{word.pinyin}}
                 </div>
                 <div class="translation">
                     {{word.english}}
                 </div>
+
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-4 offset-md-4" id="answerform">
-            <form>
+        <div class="col-md-4 offset-md-4">
+            <form id="answerForm" method="post">
+                {% csrf_token %}
                 <div class="form-group center-block" style="align-items:center; justify-content: center;">
-                    <input class="form-control" type="text" autofocus>
+                    <label for="answerbox">Type the Pinyin:</label>
+                    <input type="hidden" name="word" value="{{word.id}}">
+                    <input class="form-control" type="text" id="answerbox" autofocus autocomplete="off">
+
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script type="text/javascript" src="{% static 'flashcards/diacritics.js' %}"></script>
 
+<script type="application/javascript">
+document.addEventListener('DOMContentLoaded', () => {
+    const answerForm = document.getElementById("answerForm");
+    var correct = Diacritics.clean("{{word.pinyin}}");
+    correct = correct.replace(/\s+/g,'');
+
+    document.getElementById("answerbox").focus();
+
+    answerForm.addEventListener("submit", e => {
+        e.preventDefault();  //prevent blank input
+        var $answer = $('#answerbox');
+        var answer = $answer.val();
+        answer = answer.replace(/\s+/g,'');
+
+        console.log("User Submitted Answer of: "+answer);
+
+        if (answer == correct)
+        {
+            console.log("answer was correct");
+            $answer.after("<p class='alert alert-success' id='feedback'>Good Job! &#128513;<br>Press <kbd>Enter</kbd> to proceed.</p>");
+            document.getElementById("pinyin").style.display = "block";
+
+            $(document).on("keypress", function() {
+                $("#answerbox").focus();
+            });
+
+            $('input[type=text]').on('keydown', function(e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    answerForm.submit();
+                }
+            });
+        } else {
+            $answer.after("<p class='alert alert-danger' id='feedback'>Sorry, That's Wrong... &#128531;<br>Press <kbd>Enter</kbd> to proceed.</p></p>"); <!--todo clear old results-->
+            document.getElementById("pinyin").style.display = "block";
+            $answer.val('');
+            $('input[type=text]').on('keydown', function(e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    location.reload();
+                }
+            });
+        }
+
+
+    });
+});
+
+    console.log("script loaded");
+    $("#answerbox").focus();
+</script>
 {% endblock %}
