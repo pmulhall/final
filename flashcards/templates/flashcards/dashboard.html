@@ -7,26 +7,26 @@ HSK Prep
 {% block body %}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-<div class="container">
+<div class="container dash">
     <div class="row">
         <div class="col-md-12">
             <div class="card-deck">
-                <div class="card">
+                <div class="card" align="center">
                     <div class="card-header">Average Words Per Day</div>
-                    <div class="card-body">
-                        {{ average.created_count__avg }}
+                    <div class="card-body stat">
+                        {{ stats.average.created_count__avg }}
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">Remaining Words in Level</div>
-                    <div class="card-body">
-                        {{ average.created_count__avg }} <!--todo change to qty in level-->
+                <div class="card" align="center">
+                    <div class="card-header">Remaining Words in {{ stats.currentlevel }}</div>
+                    <div class="card-body stat">
+                        {{ stats.wordsleft }}
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">Days to exam if in profile</div>
-                    <div class="card-body">
-                        {{ average.created_count__avg }} <!--#todo update-->
+                <div class="card" align="center">
+                    <div class="card-header">Days to Finish {{ stats.currentlevel }}</div>
+                    <div class="card-body stat">
+                        {{ stats.daysleft }}
                     </div>
                 </div>
             </div>
@@ -93,14 +93,14 @@ HSK Prep
             type: 'bar',
             data: {
                 labels: [
-                    {% for day in wordsperday %}
+                    {% for day in stats.wordsperday %}
                         '{{ day.dateknown }}',
                     {% endfor %}
                 ],
         datasets: [{
             label: '# of Words Reviewed',
             data: [
-                {% for day in wordsperday %}
+                {% for day in stats.wordsperday %}
                         '{{ day.created_count }}',
                 {% endfor %}
             ],
